@@ -10,6 +10,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Get()
   getUsers(@Request() req: any) {
+    this.usersService.getHello()
     return req.user
   }
 }

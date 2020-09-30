@@ -7,14 +7,21 @@ import { JwtStrategy } from './strategies/jwt.strategy'
 import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
 
+import { AppConfigService } from '@/shared/services/app-config.service'
+
 @Module({
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   imports: [
     PassportModule,
-    JwtModule.register({
-      secret: 'secret',
-      signOptions: { expiresIn: '1m' },
+    JwtModule.registerAsync({
+      useFactory(config: AppConfigService) {
+        return {
+          secret: config.jwtSecret,
+          signOptions: { expiresIn: config.jwtExpiresIn },
+        }
+      },
+      inject: [AppConfigService]
     }),
   ],
   exports: [AuthService],

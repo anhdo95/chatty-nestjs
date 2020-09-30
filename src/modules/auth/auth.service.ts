@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AuthService {
-  getHello(): string {
-    return 'Hello World! ';
+  validateUser(username: string, password: string): Promise<any> {
+    return Promise.resolve({
+      username
+    })
   }
 }

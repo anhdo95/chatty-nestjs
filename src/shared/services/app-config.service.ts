@@ -5,6 +5,10 @@ import { ConfigService } from '@nestjs/config'
 export class AppConfigService {
   constructor(private configService: ConfigService) {}
 
+  get basePath(): string {
+    return this.configService.get('BASE_PATH') as string
+  }
+
   get port(): number {
     return this.configService.get('PORT') as number
   }

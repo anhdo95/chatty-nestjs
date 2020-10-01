@@ -12,4 +12,9 @@ export class AuthController {
   login(@Request() req: any) {
     return this.authService.login(req.user)
   }
+
+  @Post('register')
+  register() {
+    return this.authService.register()
+  }
 }

@@ -1,8 +1,17 @@
-import { Controller, Request, Post, UseGuards } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import {
+  Controller,
+  Request,
+  Post,
+  UseGuards,
+  Body,
+  ClassSerializerInterceptor,
+  UseInterceptors,
+} from '@nestjs/common'
+import { ApiTags, ApiOkResponse } from '@nestjs/swagger'
 
 import { LocalAuthGuard } from '@/guards/local-auth.guard'
 import { AuthService } from './auth.service'
+import { RegisterRequestDto, RegisterResponseDto } from './dtos/register.dto'
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -15,8 +24,10 @@ export class AuthController {
     return this.authService.login(req.user)
   }
 
+  @UseInterceptors(ClassSerializerInterceptor)
+  @ApiOkResponse({ type: RegisterResponseDto })
   @Post('register')
-  register() {
-    return this.authService.register()
+  register(@Body() body: RegisterRequestDto) {
+    return this.authService.register(body)
   }
 }

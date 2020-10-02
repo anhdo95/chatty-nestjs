@@ -1,4 +1,4 @@
-import { Expose, Transform } from 'class-transformer'
+import { Expose, Transform, Exclude } from 'class-transformer'
 import {
   Column,
   CreateDateColumn,
@@ -13,18 +13,26 @@ export class User {
 
   @ObjectIdColumn()
   @Expose({ name: 'id' })
-  @Transform(value => value.toString(), { toPlainOnly: true })
+  @Transform(String, { toPlainOnly: true })
   _id: ObjectID
 
   @Column()
   name: string
 
-  @Column()
+  @Column({ unique: true })
   email: string
+
+  @Exclude()
+  @Column()
+  password: string
 
   @CreateDateColumn()
   createdAt: Date
 
   @UpdateDateColumn()
   updatedAt: Date
+
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial)
+  }
 }

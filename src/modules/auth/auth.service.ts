@@ -1,13 +1,19 @@
 import { Injectable } from '@nestjs/common'
+import { InjectRepository } from '@nestjs/typeorm'
 import { JwtService } from '@nestjs/jwt'
-import { UsersService } from '@/modules/users/users.service'
+import { Repository } from 'typeorm'
+
+import { RegisterRequestDto, RegisterResponseDto } from './dtos/register.dto'
+import { User } from '@/database/entities/user.entity'
+import { PasswordUtil } from '@/utils/password.util'
 
 @Injectable()
 export class AuthService {
   constructor(
-    // private usersService: UsersService,
     private jwtService: JwtService,
-    private usersService: UsersService,
+    
+    @InjectRepository(User)
+    private userRepo: Repository<User>,
   ) {}
 
   validateUser(email: string, password: string): Promise<any> {
@@ -24,7 +30,15 @@ export class AuthService {
     }
   }
 
-  register() {
-    return this.usersService.create()
+  /**
+   * Creates a new user and returns the one created
+   * @param user requested user information
+   * @return the registered user's insensitive information
+   */
+  async register(user: RegisterRequestDto): Promise<RegisterResponseDto> {
+    user.password = PasswordUtil.hash(user.password)
+    const registeredUser: User = await this.userRepo.save(user)
+
+    return new RegisterResponseDto(registeredUser)
   }
 }

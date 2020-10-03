@@ -1,9 +1,17 @@
-import { Controller, Get, Request, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Request,
+  UseGuards,
+  ClassSerializerInterceptor,
+  UseInterceptors,
+} from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { JwtAuthGuard } from '@/guards/jwt-auth.guard'
 import { UsersService } from './users.service'
 
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
 @ApiTags('Users')
 export class UsersController {
@@ -13,5 +21,11 @@ export class UsersController {
   @Get()
   getUsers() {
     return this.usersService.findAll()
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getUser(@Request() req: any) {
+    return this.usersService.findOne(req.user.id)
   }
 }

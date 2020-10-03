@@ -25,17 +25,7 @@ export class UsersService {
       throw new NotFoundException()
     }
 
-    return user
-  }
-
-  async create(): Promise<User> {
-    const newUser = {
-      email: 'admin@chatty.com',
-      name: 'Admin'
-    }
-
-    const createdUser = await this.usersRepo.save(newUser)
-    return createdUser
+    return new User(user)
   }
 
   async remove(id: string): Promise<void> {

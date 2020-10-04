@@ -14,6 +14,8 @@ import {
 } from '@nestjs/websockets'
 import { Socket, Server } from 'socket.io'
 import { WsJwtGuard } from '@/guards/ws-jwt-auth.guard'
+import { LoggedInUser } from '@/interfaces/users/logged-in-user'
+import { ConversationsService } from '@/modules/conversations/conversations.service'
 
 const wsOptions: GatewayMetadata = {
   handlePreflightRequest: (req: Request, res: Response) => {
@@ -29,8 +31,11 @@ const wsOptions: GatewayMetadata = {
 
 @WebSocketGateway(wsOptions)
 export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server: Server
-  private logger: Logger = new Logger('MessagesGateway')
+  constructor(
+    private readonly conversationsService: ConversationsService,
+  ) {}
+
+  private readonly logger: Logger = new Logger('MessagesGateway')
 
   afterInit() {
     this.logger.log('Init')
@@ -46,25 +51,21 @@ export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGa
 
   @UseGuards(WsJwtGuard)
   @SubscribeMessage('join')
-  handleUserJoinRoom(@MessageBody() data: any, @ConnectedSocket() client: Socket): any {
+  handleUserJoinRoom(@MessageBody() room: string, @ConnectedSocket() client: Socket): any {
     function getMessage(user: any, text: string) {
       return { id: client.id, user, text }
     }
 
-    console.log('client.request', client.request.user)
+    const user: LoggedInUser = client.request.user
+    this.conversationsService.create({
+      ownerId: user.userId,
+      userIds: [],
+      name: room,
+      coverPhoto: '',
+    })
 
+    client.emit('message', getMessage('admin', `Welcome to the room ${room}`))
 
-    client.emit('message', getMessage('admin', `${data.name} welcome to the room ${data.room}`))
-
-    return { user: data }
-  }
-
-  @SubscribeMessage('messages')
-  handleMessage(
-    @MessageBody() data: string,
-    @ConnectedSocket() client: Socket,
-  ): WsResponse<unknown> {
-    const event = 'messages'
-    return { event, data }
+    return { user: { room } }
   }
 }

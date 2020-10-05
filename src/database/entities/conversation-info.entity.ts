@@ -22,9 +22,6 @@ export class ConversationInfo {
   userId: string
 
   @CreateDateColumn()
-  joinedTime: string
-
-  @CreateDateColumn()
   createdAt: Date
 
   @UpdateDateColumn()

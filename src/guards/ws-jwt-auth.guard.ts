@@ -14,7 +14,6 @@ export class WsJwtGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     try {
       const client: Socket = context.switchToWs().getClient()
-      
       const bearerToken: string = client.handshake?.headers?.authorization
       if (!bearerToken) return false
 
@@ -23,6 +22,7 @@ export class WsJwtGuard implements CanActivate {
 
       return !!user
     } catch (err) {
+      this.logger.error(err.message)
       throw new WsException(err.message)
     }
   }

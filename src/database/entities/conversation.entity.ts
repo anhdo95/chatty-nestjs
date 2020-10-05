@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm'
 
-export enum Type {
+export enum ConversationType {
   Direct = 'DIRECT',
   Channel = 'CHANNEL'
 }
@@ -23,8 +23,8 @@ export class Conversation {
   @Column()
   name: string
 
-  @Column({ type: 'enum', enum: Type, default: Type.Direct })
-  type: Type
+  @Column({ type: 'enum', enum: ConversationType, default: ConversationType.Direct })
+  type: ConversationType
 
   @Column('simple-array')
   userIds: string[]

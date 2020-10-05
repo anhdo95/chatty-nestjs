@@ -14,12 +14,12 @@ import { JwtAuthGuard } from '@/guards/jwt-auth.guard'
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('conversations')
 @ApiTags('Conversations')
-export class AuthController {
+export class ConversationsController {
   constructor(private readonly conversationsService: ConversationsService) {}
 
   @UseGuards(JwtAuthGuard)
   @Get()
   getConversations(@Request() req: any) {
-    return this.conversationsService.getByUserId(req.user.userId)
+    return this.conversationsService.getUserConversations(req.user.userId)
   }
 }

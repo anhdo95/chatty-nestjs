@@ -5,6 +5,7 @@ import { DatabaseModule } from '@/database/database.module'
 import { UsersModule } from '@/modules/users/users.module'
 import { MessagesModule } from '@/modules/messages/messages.module'
 import { ConversationsModule } from '@/modules/conversations/conversations.module'
+import { ConversationInfoModule } from '@/modules/conversation-info/conversation-info.module'
 import { SharedModule } from '@/shared/shared.module'
 
 @Module({
@@ -14,6 +15,7 @@ import { SharedModule } from '@/shared/shared.module'
     AuthModule,
     UsersModule,
     ConversationsModule,
+    ConversationInfoModule,
     MessagesModule,
   ],
 })

@@ -5,17 +5,17 @@ import {
   SubscribeMessage,
   MessageBody,
   ConnectedSocket,
-  WsResponse,
   OnGatewayInit,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  WebSocketServer,
   GatewayMetadata,
 } from '@nestjs/websockets'
-import { Socket, Server } from 'socket.io'
+import { Socket } from 'socket.io'
 import { WsJwtGuard } from '@/guards/ws-jwt-auth.guard'
 import { LoggedInUser } from '@/interfaces/users/logged-in-user'
+import { NewConversation } from '@/interfaces/conversations/new-conversation'
 import { ConversationsService } from '@/modules/conversations/conversations.service'
+import { ConversationResponseDto } from '@/modules/conversations/dtos/conversation.dto'
 
 const wsOptions: GatewayMetadata = {
   handlePreflightRequest: (req: Request, res: Response) => {
@@ -24,6 +24,7 @@ const wsOptions: GatewayMetadata = {
       'Access-Control-Allow-Origin': req.headers.origin,
       'Access-Control-Allow-Credentials': true,
     }
+
     res.writeHead(200, headers)
     res.end()
   },
@@ -31,9 +32,7 @@ const wsOptions: GatewayMetadata = {
 
 @WebSocketGateway(wsOptions)
 export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-  constructor(
-    private readonly conversationsService: ConversationsService,
-  ) {}
+  constructor(private readonly conversationsService: ConversationsService) {}
 
   private readonly logger: Logger = new Logger('MessagesGateway')
 
@@ -51,21 +50,16 @@ export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGa
 
   @UseGuards(WsJwtGuard)
   @SubscribeMessage('join')
-  handleUserJoinRoom(@MessageBody() room: string, @ConnectedSocket() client: Socket): any {
-    function getMessage(user: any, text: string) {
-      return { id: client.id, user, text }
-    }
-
+  async handleJoinConversation(
+    @MessageBody() conversation: NewConversation,
+    @ConnectedSocket() client: Socket,
+  ): Promise<ConversationResponseDto> {
     const user: LoggedInUser = client.request.user
-    this.conversationsService.create({
-      ownerId: user.userId,
-      userIds: [],
-      name: room,
-      coverPhoto: '',
-    })
+    conversation.ownerId = user.userId
+    const createdConversation = await this.conversationsService.create(conversation)
 
-    client.emit('message', getMessage('admin', `Welcome to the room ${room}`))
+    client.emit('message', { user: 'admin', tex: 'Welcome to the room'})
 
-    return { user: { room } }
+    return createdConversation
   }
 }

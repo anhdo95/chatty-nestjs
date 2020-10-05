@@ -16,25 +16,25 @@ services:
     ports:
       - '${MONGO_EXPOSE_PORT}:${MONGO_PORT}'
     restart: always
-  backend:
-    build:
-      context: '.'
-      dockerfile: Dockerfile
-    container_name: ${BACKEND_NAME}
-    volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-    restart: always
-    environment:
-      - NODE_ENV=${BACKEND_ENV}
-      - SET_CONTAINER_TIMEZONE=true
-      - CONTAINER_TIMEZONE=UTC
-      - TZ=UTC
-    ports:
-      - '${BACKEND_EXPOSE_PORT}:${BACKEND_PORT}'
-    depends_on:
-      - 'mongo'
-    links:
-      - 'mongo'
+  # backend:
+  #   build:
+  #     context: '.'
+  #     dockerfile: Dockerfile
+  #   container_name: ${BACKEND_NAME}
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   restart: always
+  #   environment:
+  #     - NODE_ENV=${BACKEND_ENV}
+  #     - SET_CONTAINER_TIMEZONE=true
+  #     - CONTAINER_TIMEZONE=UTC
+  #     - TZ=UTC
+  #   ports:
+  #     - '${BACKEND_EXPOSE_PORT}:${BACKEND_PORT}'
+  #   depends_on:
+  #     - 'mongo'
+  #   links:
+  #     - 'mongo'
 volumes:
   mongodb:

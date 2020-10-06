@@ -13,9 +13,9 @@ import {
 import { Socket } from 'socket.io'
 import { WsJwtGuard } from '@/guards/ws-jwt-auth.guard'
 import { LoggedInUser } from '@/interfaces/users/logged-in-user'
-import { NewConversation } from '@/interfaces/conversations/new-conversation'
 import { ConversationsService } from '@/modules/conversations/conversations.service'
 import { ConversationResponseDto } from '@/modules/conversations/dtos/conversation.dto'
+import { WsUser } from '@/decorators/ws-user.decorator'
 
 const wsOptions: GatewayMetadata = {
   handlePreflightRequest: (req: Request, res: Response) => {
@@ -51,15 +51,18 @@ export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGa
   @UseGuards(WsJwtGuard)
   @SubscribeMessage('join')
   async handleJoinConversation(
-    @MessageBody() conversation: NewConversation,
+    @MessageBody() conversationId: string,
     @ConnectedSocket() client: Socket,
-  ): Promise<ConversationResponseDto> {
-    const user: LoggedInUser = client.request.user
-    conversation.ownerId = user.userId
-    const createdConversation = await this.conversationsService.create(conversation)
+    @WsUser() user: LoggedInUser
+  ): Promise<ConversationResponseDto | undefined> {
+    const conversation = await this.conversationsService.getById(conversationId)
+    if (!conversation) return
 
-    client.emit('message', { user: 'admin', tex: 'Welcome to the room'})
-
-    return createdConversation
+    client.emit('message', { user: 'admin', text: 'Welcome to the room'})
+    client.broadcast
+      .to(conversationId)
+      .emit('message', { user: 'admin', text: `${user.name}, has joined!` })
+      
+    return conversation
   }
 }

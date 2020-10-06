@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
@@ -15,6 +15,16 @@ export class ConversationsService {
 
     private readonly conversationInfoService: ConversationInfoService
   ) {}
+
+  async getById(id: string): Promise<ConversationResponseDto> {
+    const conversation = await this.conversationsRepo.findOne(id)
+
+    if (!conversation) {
+      throw new NotFoundException('Conversation is not found!')
+    }
+
+    return new ConversationResponseDto(conversation)
+  }
 
   getUserConversations(userId: string): Promise<Conversation[]> {
     return this.conversationsRepo.find({

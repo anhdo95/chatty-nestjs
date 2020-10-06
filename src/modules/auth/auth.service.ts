@@ -45,7 +45,8 @@ export class AuthService {
 
     return {
       userId: user._id.toString(),
-      email: user.email
+      email: user.email,
+      name: user.name
     }
   }
 
@@ -64,7 +65,8 @@ export class AuthService {
     
     return {
       userId: decoded.sub,
-      email: decoded.email
+      email: decoded.email,
+      name: user.name
     }
   }
 

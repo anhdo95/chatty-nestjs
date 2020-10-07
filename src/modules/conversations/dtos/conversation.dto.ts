@@ -1,6 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 import { Conversation, ConversationType } from '@/database/entities/conversation.entity'
+import { Trim } from '@/decorators/transforms.decorator'
+import { MaxLength, IsNotEmpty, ArrayNotEmpty } from 'class-validator'
+
+export class ConversationRequestDto {
+  @IsNotEmpty()
+  @Trim()
+  @MaxLength(50)
+  @ApiProperty()
+  name: string
+
+  @ArrayNotEmpty()
+  @ApiProperty()
+  userIds: string[]
+
+  @Trim()
+  @ApiProperty()
+  coverPhoto: string
+
+}
 
 export class ConversationResponseDto {
   @ApiProperty()

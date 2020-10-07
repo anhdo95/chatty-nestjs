@@ -3,8 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm'
 
 import { Conversation, ConversationType } from '@/database/entities/conversation.entity'
-import { NewConversation } from '@/interfaces/conversations/new-conversation'
-import { ConversationResponseDto } from './dtos/conversation.dto'
+import { ConversationResponseDto, ConversationRequestDto } from './dtos/conversation.dto'
 import { ConversationInfoService } from '../conversation-info/conversation-info.service'
 
 @Injectable()
@@ -13,7 +12,7 @@ export class ConversationsService {
     @InjectRepository(Conversation)
     private readonly conversationsRepo: Repository<Conversation>,
 
-    private readonly conversationInfoService: ConversationInfoService
+    private readonly conversationInfoService: ConversationInfoService,
   ) {}
 
   async getById(id: string): Promise<ConversationResponseDto> {
@@ -32,10 +31,19 @@ export class ConversationsService {
     })
   }
 
-  async create(conversation: NewConversation): Promise<ConversationResponseDto> {
-    if (conversation.userIds.length > 1) {
-      conversation.type = ConversationType.Channel
-    }
+  getConversationType(userIds: string[]) {
+    return userIds.length > 1 ? ConversationType.Channel : ConversationType.Direct
+  }
+
+  async create(
+    conversationRequest: ConversationRequestDto,
+    ownerId: string,
+  ): Promise<ConversationResponseDto> {
+    const conversation = new Conversation({
+      ...conversationRequest,
+      ownerId,
+      type: this.getConversationType(conversationRequest.userIds),
+    })
 
     const createdConversation = await this.conversationsRepo.save(conversation)
     await Promise.all(

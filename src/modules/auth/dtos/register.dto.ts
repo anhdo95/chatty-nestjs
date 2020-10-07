@@ -5,6 +5,7 @@ import { Trim, Lowercase } from '@/decorators/transforms.decorator'
 import { User } from '@/database/entities/user.entity'
 
 export class RegisterRequestDto {
+  @IsNotEmpty()
   @Trim()
   @MaxLength(50)
   @ApiProperty()

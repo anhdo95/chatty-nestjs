@@ -11,10 +11,9 @@ import {
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger'
 
 import { ConversationsService } from './conversations.service'
-import { ConversationResponseDto } from './dtos/conversation.dto'
+import { ConversationResponseDto, ConversationRequestDto } from './dtos/conversation.dto'
 import { JwtAuthGuard } from '@/guards/jwt-auth.guard'
 import { User } from '@/decorators/user.decorator'
-import { NewConversation } from '@/interfaces/conversations/new-conversation'
 import { LoggedInUser } from '@/interfaces/users/logged-in-user'
 
 @UseInterceptors(ClassSerializerInterceptor)
@@ -32,8 +31,7 @@ export class ConversationsController {
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: ConversationResponseDto })
   @Post()
-  createConversation(@Body() conversation: NewConversation, @User() user: LoggedInUser) {
-    conversation.ownerId = user.userId
-    return this.conversationsService.create(conversation)
+  createConversation(@Body() conversation: ConversationRequestDto, @User() user: LoggedInUser) {
+    return this.conversationsService.create(conversation, user.userId)
   }
 }

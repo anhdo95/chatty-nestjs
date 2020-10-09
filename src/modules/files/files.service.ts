@@ -1,18 +1,16 @@
 import { Injectable } from '@nestjs/common'
 
 import { FileResponseDto } from './dtos/file.dto'
-import { AppConfigService } from '@/shared/services/app-config.service'
+import { configService } from '@/shared/services/config.service'
 
 @Injectable()
 export class FilesService {
-  constructor(private readonly config: AppConfigService) {}
-
   getImagePath(imageUrl: string): string {
-    return `${this.config.domain}/files/images/${imageUrl}`
+    return `${configService.domain}/files/images/${imageUrl}`
   }
 
   getTempImagePath(imageUrl: string): string {
-    return `${this.config.domain}/files/images/temp/${imageUrl}`
+    return `${configService.domain}/files/images/temp/${imageUrl}`
   }
 
   getTempImage(file: Express.Multer.File): FileResponseDto {

@@ -2,6 +2,11 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm'
 
 require('dotenv').config()
 
+interface JwtOptions {
+  secret: string
+  expiresIn: string
+}
+
 class ConfigService {
   constructor(private env: { [k: string]: string | undefined }) {}
 
@@ -14,21 +19,36 @@ class ConfigService {
     return value as string
   }
 
-  public ensureValues(keys: string[]) {
+  ensureValues(keys: string[]) {
     keys.forEach(k => this.getValue(k, true))
     return this
   }
 
-  public getPort() {
-    return this.getValue('PORT', true)
-  }
-
-  public isProduction() {
+  get isProduction() {
     const mode = this.getValue('MODE', false)
     return mode !== 'DEV'
   }
 
-  public getTypeOrmConfig(): TypeOrmModuleOptions {
+  get port() {
+    return this.getValue('PORT')
+  }
+
+  get domain(): string {
+    return this.getValue('DOMAIN')
+  }
+
+  get basePath(): string {
+    return this.getValue('BASE_PATH')
+  }
+
+  get jwt(): JwtOptions {
+    return {
+      secret: this.getValue('JWT_SECRET'),
+      expiresIn: this.getValue('JWT_EXPIRES_IN'),
+    }
+  }
+  
+  get typeOrmConfig(): TypeOrmModuleOptions {
     return {
       type: 'postgres',
 
@@ -45,7 +65,7 @@ class ConfigService {
         migrationsDir: __dirname + '/../../database/migrations',
       },
 
-      ssl: this.isProduction(),
+      ssl: this.isProduction,
     }
   }
 }

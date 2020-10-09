@@ -3,16 +3,15 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { ValidationPipe } from '@nestjs/common'
 
 import { AppModule } from '@/app.module'
-import { AppConfigService } from '@/shared/services/app-config.service'
+import { configService } from '@/shared/services/config.service'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
-  const config = app.get(AppConfigService)
 
   const options = new DocumentBuilder()
     .setTitle('Chatty API Docs')
     .setVersion('1.0')
-    .addServer(config.basePath)
+    .addServer(configService.basePath)
     .addBearerAuth()
     .build()
   const document = SwaggerModule.createDocument(app, options)
@@ -20,12 +19,16 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe)
 
-  // app.enableCors({
-  //   origin: '*'
-  // })
+  app.enableCors({
+    origin: '*',
+    allowedHeaders: ['Content-Type', 'Authorization', 'Language', 'Content-Disposition'],
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
+    exposedHeaders: ['Content-Disposition']
+  })
   
-  await app.listen(config.port, () =>
-    console.log(`Server is running on ${config.port}`),
+  await app.listen(configService.port, () =>
+    console.log(`Server is running on ${configService.port}`),
   )
 }
 bootstrap()

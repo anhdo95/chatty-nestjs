@@ -5,7 +5,7 @@ import { configService } from '@/shared/services/config.service'
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(configService.getTypeOrmConfig())
+    TypeOrmModule.forRoot(configService.typeOrmConfig)
   ],
   exports: [],
 })

@@ -15,7 +15,7 @@ import { ConversationResponseDto, ConversationRequestDto } from './dtos/conversa
 import { JwtAuthGuard } from '@/guards/jwt-auth.guard'
 import { User } from '@/decorators/user.decorator'
 import { LoggedInUser } from '@/interfaces/users/logged-in-user'
-import { ConversationsRequestDto } from './dtos/conversations.dto'
+import { ConversationsRequestDto, ConversationsResponseDto } from './dtos/conversations.dto'
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('conversations')
@@ -24,6 +24,7 @@ export class ConversationsController {
   constructor(private readonly conversationsService: ConversationsService) {}
 
   @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: ConversationsResponseDto })
   @Get()
   getConversations(@Param() params: ConversationsRequestDto, @User() user: LoggedInUser) {
     return this.conversationsService.getUserConversations(user.userId, params)

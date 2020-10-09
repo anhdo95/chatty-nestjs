@@ -22,12 +22,6 @@ export class MessageResponseDto {
   id: number
 
   @ApiProperty()
-  conversationId: number
-
-  @ApiProperty()
-  userId: number
-
-  @ApiProperty()
   content: string
 
   @ApiProperty()

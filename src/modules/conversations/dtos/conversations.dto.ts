@@ -5,6 +5,6 @@ import { ConversationResponseDto } from './conversation.dto'
 export class ConversationsRequestDto extends PageableRequestDto {}
 
 export class ConversationsResponseDto extends PageableResponseDto {
-  @ApiProperty()
+  @ApiProperty({ type: ConversationResponseDto, isArray: true })
   items: ConversationResponseDto[]
 }

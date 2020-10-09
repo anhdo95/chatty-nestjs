@@ -6,11 +6,10 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { LocalStrategy } from './strategies/local.strategy'
 import { JwtStrategy } from './strategies/jwt.strategy'
 import { AuthController } from './auth.controller'
-
 import { AuthService } from './auth.service'
-import { UsersService } from '@/modules/users/users.service'
 
-import { AppConfigService } from '@/shared/services/app-config.service'
+import { UsersService } from '@/modules/users/users.service'
+import { configService } from '@/shared/services/config.service'
 import { User } from '@/database/entities/user.entity'
 
 @Module({
@@ -19,14 +18,9 @@ import { User } from '@/database/entities/user.entity'
   imports: [
     TypeOrmModule.forFeature([User]),
     PassportModule,
-    JwtModule.registerAsync({
-      useFactory(config: AppConfigService) {
-        return {
-          secret: config.jwtSecret,
-          signOptions: { expiresIn: config.jwtExpiresIn },
-        }
-      },
-      inject: [AppConfigService]
+    JwtModule.register({
+      secret: configService.jwt.secret,
+      signOptions: { expiresIn: configService.jwt.expiresIn },
     }),
   ],
   exports: [AuthService],

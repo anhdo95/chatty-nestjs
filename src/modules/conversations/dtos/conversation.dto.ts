@@ -14,7 +14,7 @@ export class ConversationRequestDto {
   name: string
 
   @ArrayNotEmpty()
-  @ApiProperty()
+  @ApiProperty({ type: Number, isArray: true })
   userIds: number[]
 
   @Trim()

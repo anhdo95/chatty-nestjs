@@ -62,10 +62,7 @@ export class ConversationsService implements OnModuleInit {
     
     const [items, count] = await conversationQuery.getManyAndCount()
 
-    return {
-      items,
-      totalItems: count
-    }
+    return new ConversationsResponseDto({ items, totalItems: count })
   }
 
   getConversationType(userIds: number[]) {
@@ -96,7 +93,7 @@ export class ConversationsService implements OnModuleInit {
     const entities = await Promise.all(operations)
 
     const lastMessage = entities[entities.length - 1] as Message
-    conversation.lastMessageId = Number(lastMessage.id)
+    conversation.lastMessageId = lastMessage.id
     await this.conversationsRepo.save(conversation)
     conversation.lastMessage = lastMessage
 

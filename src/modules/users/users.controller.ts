@@ -18,7 +18,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @UseGuards(JwtAuthGuard)
-  @Get('profile')
+  @Get('me')
   getUser(@Request() req: any) {
     return this.usersService.findOne(req.user.id)
   }

@@ -6,7 +6,7 @@ import {
   Get,
   Body,
   Post,
-  Param,
+  Query,
 } from '@nestjs/common'
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger'
 
@@ -15,6 +15,7 @@ import { ConversationResponseDto, ConversationRequestDto } from './dtos/conversa
 import { JwtAuthGuard } from '@/guards/jwt-auth.guard'
 import { User } from '@/decorators/user.decorator'
 import { LoggedInUser } from '@/interfaces/users/logged-in-user'
+import { PageablePipe } from '@/pipes/pageable.pipe'
 import { ConversationsRequestDto, ConversationsResponseDto } from './dtos/conversations.dto'
 
 @UseInterceptors(ClassSerializerInterceptor)
@@ -26,7 +27,7 @@ export class ConversationsController {
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: ConversationsResponseDto })
   @Get()
-  getConversations(@Param() params: ConversationsRequestDto, @User() user: LoggedInUser) {
+  getConversations(@Query(PageablePipe) params: ConversationsRequestDto, @User() user: LoggedInUser) {
     return this.conversationsService.getUserConversations(user.userId, params)
   }
 

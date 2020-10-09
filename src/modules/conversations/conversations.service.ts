@@ -53,7 +53,7 @@ export class ConversationsService implements OnModuleInit {
       .where('user.id = :userId', { userId })
 
     if (params.offset) {
-      conversationQuery.offset(params.offset)
+      conversationQuery.skip(params.offset)
     }
 
     if (params.limit) {

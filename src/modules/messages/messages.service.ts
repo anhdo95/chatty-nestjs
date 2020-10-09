@@ -22,6 +22,10 @@ export class MessagesService {
     return new Message(createdMessage)
   }
 
+  async getUserMessages(conversation) {
+
+  }
+
   async joinConversation(socket: Socket, joining: JoiningInformation) {
     const conversation = await this.conversationsService.getById(joining.conversationId)
     if (!conversation) return

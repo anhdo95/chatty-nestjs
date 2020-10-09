@@ -40,7 +40,7 @@ export class AuthService {
     }
 
     if (!PasswordUtil.compare(password, user.password)) {
-      throw new UnauthorizedException()
+      throw new UnauthorizedException('Your account is invalid!')
     }
 
     return {

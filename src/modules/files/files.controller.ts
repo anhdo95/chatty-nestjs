@@ -13,9 +13,9 @@ import { ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
 
 import { FilesService } from './files.service'
-import { FileInterceptor } from '@/mixins/interceptors/file.interceptor'
-import { FilesInterceptor } from '@/mixins/interceptors/files.interceptor'
-import { IMAGE_PATH, TEMP_IMAGE_PATH } from '@/common/constants/file'
+import { FileInterceptor } from '@/interceptors/file.interceptor'
+import { FilesInterceptor } from '@/interceptors/files.interceptor'
+import { IMAGE_PATH, TEMP_IMAGE_PATH } from '@/shared/constants/file'
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('files')

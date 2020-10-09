@@ -3,7 +3,7 @@ import * as fs from 'fs'
 import { v4 as uuidv4 } from 'uuid'
 import { StorageEngine, diskStorage } from 'multer'
 
-import { TEMP_IMAGE_PATH } from '@/common/constants/file'
+import { TEMP_IMAGE_PATH } from '@/shared/constants/file'
 
 export class FileUtil {
   static customizeFileName(

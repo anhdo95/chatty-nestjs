@@ -1,8 +1,10 @@
+import { MaxLength, IsNotEmpty, ArrayNotEmpty } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 
-import { Conversation, ConversationType } from '@/database/entities/conversation.entity'
 import { Trim } from '@/decorators/transforms.decorator'
-import { MaxLength, IsNotEmpty, ArrayNotEmpty } from 'class-validator'
+import { Conversation, ConversationType } from '@/database/entities/conversation.entity'
+import { MessageResponseDto } from '@/modules/messages/dtos/message.dto'
+import { Message } from '@/database/entities/message.entity'
 
 export class ConversationRequestDto {
   @IsNotEmpty()
@@ -13,18 +15,17 @@ export class ConversationRequestDto {
 
   @ArrayNotEmpty()
   @ApiProperty()
-  userIds: string[]
+  userIds: number[]
 
   @Trim()
   @ApiProperty()
   coverPhoto: string
-
 }
 
 export class ConversationResponseDto {
   @ApiProperty()
-  id: string
-
+  id: number
+  
   @ApiProperty()
   name: string
 
@@ -32,7 +33,10 @@ export class ConversationResponseDto {
   type: ConversationType
 
   @ApiProperty()
-  ownerId: string
+  coverPhoto: string
+
+  @ApiProperty()
+  lastMessage?: MessageResponseDto
 
   @ApiProperty()
   createdAt: Date
@@ -41,10 +45,11 @@ export class ConversationResponseDto {
   updatedAt: Date
 
   constructor(conversation: Conversation) {
-    this.id = conversation._id.toString()
+    this.id = conversation.id
     this.name = conversation.name
     this.type = conversation.type
-    this.ownerId = conversation.ownerId
+    this.coverPhoto = conversation.coverPhoto
+    this.lastMessage = new MessageResponseDto(conversation.lastMessage as Message)
     this.createdAt = conversation.createdAt
     this.updatedAt = conversation.updatedAt
   }

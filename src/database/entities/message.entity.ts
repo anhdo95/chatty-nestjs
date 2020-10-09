@@ -1,36 +1,25 @@
-import { Expose, Transform } from 'class-transformer'
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  ObjectID,
-  ObjectIdColumn,
-  UpdateDateColumn,
-} from 'typeorm'
+import { Column, Entity, ManyToOne, JoinColumn } from 'typeorm'
+
+import { BaseEntity } from './base.entity'
+import { User } from './user.entity'
+import { Conversation } from './conversation.entity'
 
 @Entity()
-export class Message {
-  @ObjectIdColumn()
-  @Expose({ name: 'id' })
-  @Transform(String, { toPlainOnly: true })
-  _id: ObjectID
+export class Message extends BaseEntity<Message> {
+  @Column()
+  conversationId: number
 
-  @Column({ unique: true })
-  conversationId: string
+  @ManyToOne(() => Conversation, conversation => conversation.messages)
+  @JoinColumn({ name: 'conversationId' })
+  conversation: Conversation
 
   @Column()
-  userId: string
+  userId: number
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'userId' })
+  user: User
 
   @Column()
   content: string
-
-  @CreateDateColumn()
-  createdAt: Date
-
-  @UpdateDateColumn()
-  updatedAt: Date
-
-  constructor(partial: Partial<Message>) {
-    Object.assign(this, partial)
-  }
 }

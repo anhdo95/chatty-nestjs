@@ -1,38 +1,20 @@
-import { Expose, Transform, Exclude } from 'class-transformer'
+import { Exclude } from 'class-transformer'
 import {
   Column,
-  CreateDateColumn,
   Entity,
-  ObjectID,
-  ObjectIdColumn,
-  UpdateDateColumn,
 } from 'typeorm'
 
+import { BaseEntity } from './base.entity'
+
 @Entity()
-export class User {
-
-  @ObjectIdColumn()
-  @Expose({ name: 'id' })
-  @Transform(String, { toPlainOnly: true })
-  _id: ObjectID
-
-  @Column()
+export class User extends BaseEntity<User> {
+  @Column({ type: 'varchar', length: 100 })
   name: string
 
-  @Column({ unique: true })
+  @Column({ unique: true, type: 'varchar', length: 100 })
   email: string
 
   @Exclude()
-  @Column()
+  @Column({ type: 'varchar' })
   password: string
-
-  @CreateDateColumn()
-  createdAt: Date
-
-  @UpdateDateColumn()
-  updatedAt: Date
-
-  constructor(partial: Partial<User>) {
-    Object.assign(this, partial)
-  }
 }

@@ -18,7 +18,11 @@ export class UsersService {
     return this.usersRepo.find()
   }
 
-  async findOne(id: string): Promise<User> {
+  findByIds(ids: number[]) {
+    return this.usersRepo.findByIds(ids)
+  }
+
+  async findOne(id: number): Promise<User> {
     const user = await this.usersRepo.findOne(id)
 
     if (!user) {
@@ -28,7 +32,7 @@ export class UsersService {
     return new User(user)
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: number): Promise<void> {
     await this.usersRepo.delete(id)
   }
 }

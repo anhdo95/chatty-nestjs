@@ -9,11 +9,11 @@ import { NewConversationInfo } from '@/interfaces/conversation-info/new-conversa
 export class ConversationInfoService {
   constructor(
     @InjectRepository(ConversationInfo)
-    private readonly converInfoRepo: Repository<ConversationInfo>,
+    private readonly conversationInfoRepo: Repository<ConversationInfo>,
   ) {}
 
-  async create(converInfo: NewConversationInfo): Promise<ConversationInfo> {
-    const createdConverInfo = await this.converInfoRepo.save(converInfo)
+  async create(conversationInfo: NewConversationInfo): Promise<ConversationInfo> {
+    const createdConverInfo = await this.conversationInfoRepo.save(conversationInfo)
     return new ConversationInfo(createdConverInfo)
   }
 }

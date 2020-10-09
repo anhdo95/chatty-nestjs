@@ -9,10 +9,13 @@ import { UsersModule } from '@/modules/users/users.module'
 import { ConversationInfoModule } from '@/modules/conversation-info/conversation-info.module'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Conversation]), UsersModule, ConversationInfoModule],
+  imports: [
+    TypeOrmModule.forFeature([Conversation]),
+    UsersModule,
+    ConversationInfoModule,
+  ],
   controllers: [ConversationsController],
   providers: [ConversationsService],
   exports: [ConversationsService],
 })
-
 export class ConversationsModule {}

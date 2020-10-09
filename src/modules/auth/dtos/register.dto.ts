@@ -27,7 +27,7 @@ export class RegisterRequestDto {
 
 export class RegisterResponseDto {
   @ApiProperty()
-  id: string
+  id: number
 
   @ApiProperty()
   name: string
@@ -42,7 +42,7 @@ export class RegisterResponseDto {
   updatedAt: Date
 
   constructor(user: User) {
-    this.id = user._id.toString()
+    this.id = user.id
     this.name = user.name
     this.email = user.email
     this.createdAt = user.createdAt

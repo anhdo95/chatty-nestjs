@@ -1,12 +1,12 @@
 import {
   Controller,
-  Request,
   UseGuards,
   ClassSerializerInterceptor,
   UseInterceptors,
   Get,
   Body,
   Post,
+  Param,
 } from '@nestjs/common'
 import { ApiTags, ApiOkResponse } from '@nestjs/swagger'
 
@@ -15,6 +15,7 @@ import { ConversationResponseDto, ConversationRequestDto } from './dtos/conversa
 import { JwtAuthGuard } from '@/guards/jwt-auth.guard'
 import { User } from '@/decorators/user.decorator'
 import { LoggedInUser } from '@/interfaces/users/logged-in-user'
+import { ConversationsRequestDto } from './dtos/conversations.dto'
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('conversations')
@@ -24,8 +25,8 @@ export class ConversationsController {
 
   @UseGuards(JwtAuthGuard)
   @Get()
-  getConversations(@Request() req: any) {
-    return this.conversationsService.getUserConversations(req.user.userId)
+  getConversations(@Param() params: ConversationsRequestDto, @User() user: LoggedInUser) {
+    return this.conversationsService.getUserConversations(user.userId, params)
   }
 
   @UseGuards(JwtAuthGuard)

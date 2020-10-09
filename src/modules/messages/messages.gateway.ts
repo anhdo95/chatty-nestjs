@@ -52,7 +52,7 @@ export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGa
   @UseGuards(WsJwtGuard)
   @SubscribeMessage('join')
   async handleJoinConversation(
-    @MessageBody() conversationId: string,
+    @MessageBody() conversationId: number,
     @ConnectedSocket() client: Socket,
     @WsUser() user: LoggedInUser
   ): Promise<ConversationResponseDto | undefined> {

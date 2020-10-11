@@ -13,12 +13,12 @@ export class Message extends BaseEntity<Message> {
   @JoinColumn({ name: 'conversationId' })
   conversation: Conversation
 
-  @Column()
-  userId: number
+  @Column({ type: 'int4', nullable: true })
+  userId?: number
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'userId' })
-  user: User
+  user?: User
 
   @Column()
   content: string

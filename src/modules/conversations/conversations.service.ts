@@ -71,28 +71,21 @@ export class ConversationsService implements OnModuleInit {
 
   async createRelations(conversation: Conversation): Promise<ConversationRelations[]> {
     const userIds = conversation.users.map(user => user.id)
-    const operations = userIds.reduce(
-      (promises: Promise<ConversationRelations>[], userId) =>
-        promises
-          .concat(
-            this.conversationInfoService.create({
-              conversationId: conversation.id,
-              userId,
-            }),
-          )
-          .concat(
-            this.messagesService.create({
-              conversationId: conversation.id,
-              userId,
-              content: 'Say hi to your friend!',
-            }),
-          ),
-      [],
-    )
-    
-    const entities = await Promise.all(operations)
 
-    const lastMessage = entities[entities.length - 1] as Message
+    const entities = await Promise.all(
+      userIds.map(userId =>
+        this.conversationInfoService.create({
+          conversationId: conversation.id,
+          userId,
+        }),
+      ),
+    )
+
+    const lastMessage = await this.messagesService.create({
+      conversationId: conversation.id,
+      content: 'Say hi to your friend!',
+    })
+
     conversation.lastMessageId = lastMessage.id
     await this.conversationsRepo.save(conversation)
     conversation.lastMessage = lastMessage

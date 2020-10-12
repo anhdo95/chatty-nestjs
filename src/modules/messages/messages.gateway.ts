@@ -17,6 +17,8 @@ import { WsJwtGuard } from '@/guards/ws-jwt-auth.guard'
 import { LoggedInUser } from '@/interfaces/users/logged-in-user'
 import { ConversationResponseDto } from '@/modules/conversations/dtos/conversation.dto'
 import { WsUser } from '@/decorators/ws-user.decorator'
+import { MessageRequestDto, MessageResponseDto } from './dtos/message.dto'
+import { Message } from '@/database/entities/message.entity'
 
 const wsOptions: GatewayMetadata = {
   handlePreflightRequest: (req: Request, res: Response) => {
@@ -49,7 +51,7 @@ export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGa
     this.logger.log(`Client disconnected: ${client.id}`)
   }
 
-  @UseGuards(WsJwtGuard)
+  // @UseGuards(WsJwtGuard)
   @SubscribeMessage('join')
   async handleJoinConversation(
     @MessageBody() conversationId: number,
@@ -58,7 +60,19 @@ export class MessagesGateway implements OnGatewayInit, OnGatewayConnection, OnGa
   ): Promise<ConversationResponseDto | undefined> {
     return this.messagesService.joinConversation(client, {
       conversationId,
-      user
+      // user
     })
+  }
+
+  @UseGuards(WsJwtGuard)
+  @SubscribeMessage('sendMessage')
+  async handleSendMessage(
+    @MessageBody() message: MessageRequestDto,
+    @ConnectedSocket() client: Socket,
+    @WsUser() user: LoggedInUser,
+  ): Promise<void> {
+    console.log('user', user)
+    message.userId = user.userId
+    return this.messagesService.sendMessage(client, message)
   }
 }

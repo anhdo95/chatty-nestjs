@@ -9,7 +9,9 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 
 import { JwtAuthGuard } from '@/guards/jwt-auth.guard'
+import { User } from '@/decorators/user.decorator'
 import { UsersService } from './users.service'
+import { LoggedInUser } from '@/interfaces/users/logged-in-user'
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller('users')
@@ -19,7 +21,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  getUser(@Request() req: any) {
-    return this.usersService.findOne(req.user.id)
+  getUser(@User() user: LoggedInUser) {
+    return this.usersService.findOne(user.userId)
   }
 }

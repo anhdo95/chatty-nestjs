@@ -33,7 +33,10 @@ export class ConversationsService implements OnModuleInit {
   }
 
   async getById(id: number): Promise<ConversationResponseDto> {
-    const conversation = await this.conversationsRepo.findOne(id)
+    const conversation = await this.conversationsRepo.createQueryBuilder('conversation')
+      .leftJoinAndSelect('conversation.lastMessage', 'lastMessage')
+      .where('conversation.id = :id', { id })
+      .getOne()
 
     if (!conversation) {
       throw new NotFoundException('Conversation is not found!')

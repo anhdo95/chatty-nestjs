@@ -19,13 +19,18 @@ export class UsersService {
     return this.usersRepo.findByIds(ids)
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOneEntity(id: number): Promise<User> {
     const user = await this.usersRepo.findOne(id)
 
     if (!user) {
       throw new NotFoundException()
     }
 
+    return user
+  }
+
+  async findOne(id: number): Promise<User> {
+    const user = await this.findOneEntity(id)
     return new User(user)
   }
 

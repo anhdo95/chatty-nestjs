@@ -33,7 +33,8 @@ export class ConversationsService implements OnModuleInit {
   }
 
   async getById(id: number): Promise<ConversationResponseDto> {
-    const conversation = await this.conversationsRepo.createQueryBuilder('conversation')
+    const conversation = await this.conversationsRepo
+      .createQueryBuilder('conversation')
       .leftJoinAndSelect('conversation.lastMessage', 'lastMessage')
       .where('conversation.id = :id', { id })
       .getOne()
@@ -54,6 +55,7 @@ export class ConversationsService implements OnModuleInit {
       .leftJoin('conversation.users', 'user')
       .leftJoinAndSelect('conversation.lastMessage', 'lastMessage')
       .where('user.id = :userId', { userId })
+      .orderBy('lastMessage.createdAt', 'DESC')
 
     if (params.offset) {
       conversationQuery.skip(params.offset)
@@ -62,7 +64,7 @@ export class ConversationsService implements OnModuleInit {
     if (params.limit) {
       conversationQuery.take(params.limit)
     }
-    
+
     const [items, count] = await conversationQuery.getManyAndCount()
 
     return new ConversationsResponseDto({ items, totalItems: count })
@@ -113,5 +115,11 @@ export class ConversationsService implements OnModuleInit {
     await this.createRelations(createdConversation)
 
     return new ConversationResponseDto(createdConversation)
+  }
+
+  updateLastMessage(conversationId: number, lastMessage: Message) {
+    const set = { lastMessage }
+    const where = { id: conversationId }
+    return this.conversationsRepo.update(where, set)
   }
 }

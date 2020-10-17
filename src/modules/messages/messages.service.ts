@@ -69,7 +69,10 @@ export class MessagesService {
 
   async sendMessage(socket: Socket, message: MessageRequestDto) {
     const createdMessage = await this.create(message)
-    console.log('createdMessage', createdMessage)
+    await this.conversationsService.updateLastMessage(
+      createdMessage.conversationId,
+      createdMessage,
+    )
 
     socket.to(message.conversationId.toString()).emit('message', createdMessage)
     socket.emit('message', createdMessage)

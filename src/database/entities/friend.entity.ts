@@ -3,7 +3,7 @@ import { Column, Entity, ManyToOne, JoinColumn } from 'typeorm'
 import { BaseEntity } from './base.entity'
 import { User } from './user.entity'
 
-export enum Status {
+export enum FriendStatus {
   Follow = 'FOLLOW',
   Unfollow = 'UNFOLLOW',
 }
@@ -24,6 +24,6 @@ export class Friend extends BaseEntity<Friend> {
   @JoinColumn({ name: 'toUserId' })
   toUser: string
 
-  @Column({ type: 'enum', enum: Status, default: Status.Follow })
-  status: Status
+  @Column({ type: 'enum', enum: FriendStatus, default: FriendStatus.Follow })
+  status: FriendStatus
 }

@@ -36,6 +36,7 @@ export class ConversationsService implements OnModuleInit {
     const conversation = await this.conversationsRepo
       .createQueryBuilder('conversation')
       .leftJoinAndSelect('conversation.lastMessage', 'lastMessage')
+      .leftJoinAndSelect('conversation.users', 'users')
       .where('conversation.id = :id', { id })
       .getOne()
 
@@ -102,6 +103,15 @@ export class ConversationsService implements OnModuleInit {
     conversationRequest: ConversationRequestDto,
     ownerId: number,
   ): Promise<ConversationResponseDto> {
+    const existingConversation = await this.getDirectConversation(
+      ownerId,
+      conversationRequest.userIds[0],
+    )
+
+    if (existingConversation) {
+      return this.getById(existingConversation.id)
+    }
+
     const conversation = new Conversation({
       ...conversationRequest,
       ownerId,
@@ -121,5 +131,15 @@ export class ConversationsService implements OnModuleInit {
     const set = { lastMessage }
     const where = { id: conversationId }
     return this.conversationsRepo.update(where, set)
+  }
+
+  getDirectConversation(ownerId: number, toUserId: number) {
+    return this.conversationsRepo.createQueryBuilder('conversation')
+      .leftJoin('conversation.users', 'user')
+      .where('conversation.type = :type', { type: ConversationType.Direct })
+      .andWhere('user.id IN (:...userIds)', { userIds: [toUserId, ownerId] })
+      .groupBy('conversation.id')
+      .having('count(conversation.id) = 2')
+      .getOne()
   }
 }

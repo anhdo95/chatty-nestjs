@@ -5,6 +5,7 @@ import { Trim } from '@/decorators/transforms.decorator'
 import { Conversation, ConversationType } from '@/database/entities/conversation.entity'
 import { MessageResponseDto } from '@/modules/messages/dtos/message.dto'
 import { Message } from '@/database/entities/message.entity'
+import { User } from '@/database/entities/user.entity'
 
 export class ConversationRequestDto {
   @IsNotEmpty()
@@ -39,6 +40,9 @@ export class ConversationResponseDto {
   lastMessage?: MessageResponseDto
 
   @ApiProperty()
+  users?: User[]
+
+  @ApiProperty()
   createdAt: Date
 
   @ApiProperty()
@@ -50,6 +54,7 @@ export class ConversationResponseDto {
     this.type = conversation.type
     this.coverPhoto = conversation.coverPhoto
     this.lastMessage = new MessageResponseDto(conversation.lastMessage as Message)
+    this.users = conversation.users
     this.createdAt = conversation.createdAt
     this.updatedAt = conversation.updatedAt
   }
